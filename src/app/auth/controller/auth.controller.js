@@ -1,4 +1,5 @@
 import * as authService from '../service/auth.service.js';
+import {toMs} from "../../../common/utlis/time.js";
 
 export async function register (req,res,next){
 
@@ -13,5 +14,55 @@ export async function register (req,res,next){
         next(error)
     }
 
+}
+export async function verifyAccount(req,res,next){
+    try{
+        const{email,code}=req.body;
+       const updatedUser= await authService.verifyAccount(email,code)
+        res.json({
+            message:"User verified successfully",
+            success:true,
+            data:updatedUser,
 
+        });
+
+    }catch (error){
+        next(error);
+    }
+}
+export async function login(req,res,next){
+    try{
+        const{email,password}=req.body;
+        const token=await authService.login(email,password);
+        res.cookie('access_token',token,{
+            httpOnly:true,
+            maxAge:toMs(1,'hours'),
+        })
+        res.json({
+            message:"login successfully",
+            success:true,
+
+        })
+
+    }catch(error){
+        next(error);
+    }
+}
+export async function sendOtp(req,res,next){
+    try{
+    const {email}=req.body;
+  await  authService.sentOtp(email);
+  res.json({message:'new otp sent,check user email',success:true});
+    }catch(err){
+        next(err)
+    }
+}
+export async function resetPassword(req,res,next){
+    try{
+        const {email,code,newPassword}=req.body
+       await authService.resetPassword(email,code,newPassword);
+        res.json({message:'password reset successfully',success:true});
+    }catch(error){
+        next(error);
+    }
 }
