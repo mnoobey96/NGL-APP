@@ -12,7 +12,7 @@ import {deleteOTPsByEmail} from "../repository/otp.repository.js";
 import {generateOTPCode} from "../../../common/utlis/otp.js";
 import {generateToken} from "../utlis/token.js";
 import {comparePassword, hashPassword} from "../utlis/hash.js";
-
+import bcrypt from 'bcrypt';
 
 
 export async function register(userData){
@@ -24,9 +24,9 @@ export async function register(userData){
     //3. if no ,  hash password
     userData.password = await hashPassword(userData.password)
     //14.25
-
     //4.save user into DB
     const createdUser=await authRepository.createUser(userData);
+
     //5.generate and save otp to db
     const code= generateOTPCode();
    await otpRepository.createOTP({
@@ -68,12 +68,11 @@ export async function login(email,password){
     //1.1 not found >> throw error
     if(!user)throw userNotExist;
     //1.2 not verified >> throw error must verify
-    if(user.isVerified===false)throw userIsNotVerified;
+    if(user['isVerified']===false)throw userIsNotVerified;
     //2.if found we compare password
     const match=await comparePassword(password,user['password']);
     if(!match)throw invalidPassword;
-    //3.if true then generate access token
-
+    // 3.if true then generate access token
     return generateToken({id:user._id,name:user.name});
 }
 
