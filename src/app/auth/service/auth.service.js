@@ -13,6 +13,7 @@ import {generateOTPCode} from "../../../common/utlis/otp.js";
 import {generateToken} from "../utlis/token.js";
 import {comparePassword, hashPassword} from "../utlis/hash.js";
 import bcrypt from 'bcrypt';
+import {OAuth2Client} from "google-auth-library";
 
 
 export async function register(userData){
@@ -108,4 +109,15 @@ await userRepository.updateUserByEmail(email,{password:newPassword});
 //4.delete otp
  await otpRepository.deleteOTPsByEmail(email);
 }
+function verifyGoogleToken(idToken){
+    const client = new OAuth2Client({client_id:'456861636543-vtkcfefqrv536o0gf535nsstdpir5n3k.apps.googleusercontent.com'})
+    client.verifyIdToken({idToken: idToken})
+}
+export async function loginWithGoogle(idToken){
+    //1.verify token    456861636543-vtkcfefqrv536o0gf535nsstdpir5n3k.apps.googleusercontent.com
 
+    //2.check user existence
+    //3.if exits >> generate token
+    //4.if not >>create user>>generate token
+
+}
