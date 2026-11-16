@@ -2,6 +2,7 @@ import * as authService from '../service/auth.service.js';
 import {toMs} from "../../../common/utlis/time.js";
 import {validateBody} from "../../../common/validation/validation.js";
 import {loginDTO, registerDTO, resetPasswordDTO, sendDTO, verifyAccountDTO} from "../dto/auth.dto.js";
+import {auth} from "google-auth-library";
 
 export async function register (req,res,next){
 
@@ -74,4 +75,14 @@ export async function resetPassword(req,res,next){
         next(error);
     }
 }
-
+export async function loginWithGoogle(req,res,next){
+    try {
+       const token= await authService.loginWithGoogle(req.body.idToken);
+       res.cookie('access_token',token,{
+           httpOnly:true,maxAge:toMs(1,'hours'),
+       })
+        res.json({message:"user logged successfully",success:true});
+    }catch(error){
+        next(error)
+    }
+}

@@ -5,15 +5,16 @@ import express from 'express';
 import authRouter from "./app/auth/auth.route.js";
 import userRouter from "./app/user/user.route.js";
 import messageRouter from "./app/message/message.route.js";
+import {logger} from "./common/logger/logger.js";
+import cors from ' cors';
 // import connectDB from "./common/db/mongoose.js";
 import {OTP} from "./app/auth/model/otp.model.js";
-import {logger} from "./common/logger/logger.js";
+// loading env variables
 config();
 const app = express();
-// connect to DB
-// connectDB();
-// parse req body buffer -> object
+app.use(cors({origin:'http://localhost:4200'}))
 
+// parse req body buffer -> object
 app.use(express.json());
 
 // routes - map features
@@ -22,14 +23,12 @@ app.use('/users', userRouter);
 app.use('/message',messageRouter);
 // global error handler
 app.use((err, req, res, next)=>{
-
     logger.error(err.message,err);
-
-     if(err.isOperational===true){
+    if(err.isOperational===true){
    return res.status(err.statusCode).json({
         message:err.message,
         success:false,
-        // stack:err.stack,
+        // stack:err.stack
     });
     }
     return res.status(500).json({
