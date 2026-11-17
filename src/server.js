@@ -16,4 +16,3 @@ async function shutdown() {
 
 server.on('SIGINT', shutdown);
 server.on('SIGTERM', shutdown);
-// asdw
