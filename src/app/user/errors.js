@@ -1,4 +1,4 @@
-import {AppError} from "../../pkg/error/error.js";
+import {AppError} from "../../lib/error/error.js";
 
 export const userNotExist = new AppError("User doesn't exist.",404);
 export const userAlreadyExists = new AppError("User already exists",409);

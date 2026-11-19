@@ -10,6 +10,8 @@ import cors from 'cors';
 // import connectDB from "./lib/db/mongoose.js";
 import {OTP} from "./app/auth/model/otp.model.js";
 import {env} from "./lib/config/env.js";
+import {router} from "./route.js";
+import {globalErrorHandler} from "./lib/error/error.handler.js";
 // loading env variables
 // config();
 
@@ -21,25 +23,9 @@ export function createApp(){
     app.use(express.json());
 
 // routes - map features
-    app.use('/auth', authRouter);
-    app.use('/users', userRouter);
-    app.use('/message',messageRouter);
-// global error handler
-    app.use((err, req, res, next)=>{
-        logger.error(err.message,err);
-        if(err.isOperational===true){
-            return res.status(err.statusCode).json({
-                message:err.message,
-                success:false,
-                // stack:err.stack
-            });
-        }
-        return res.status(500).json({
-            error:'something went wrong',
-            success:false,
-        });
-    })
 
+app.use('/api',router)
+app.use(globalErrorHandler);
     return app;
 }
 
