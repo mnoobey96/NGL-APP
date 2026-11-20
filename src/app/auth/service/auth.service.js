@@ -15,6 +15,7 @@ import {comparePassword, hashPassword} from "../utlis/hash.js";
 import bcrypt from 'bcrypt';
 import {OAuth2Client} from "google-auth-library";
 import {verifyGoogleToken} from "../../../lib/utlis/google-auth.js";
+import {mailjetProvider} from "../../../lib/email/init.js";
 
 
 export async function register(userData){
@@ -37,7 +38,7 @@ export async function register(userData){
         expiresAt: new Date(Date.now()+toMs(5,'minutes'))
     })
     //6. send otp email
-    await sendEmail(userData.email,'verification-code',`<h1>Your verification code is ${code}</h1>`);
+    await mailjetProvider.sendMail(userData.email,'verification-code',`<h1>Your verification code is ${code}</h1>`);
    return createdUser;}
 
 // verify the account
@@ -95,7 +96,7 @@ export async function sentOtp(email){
         expiresAt: Date.now()+toMs(3,'minutes')
     })
     //4.send the otp to email
-    await sendEmail(email,'new otp',`<p>your new otp is ${code}</p>`);
+    await mailjetProvider.sendMail(email,'new otp',`<p>your new otp is ${code}</p>`);
 }
 
 export async function resetPassword(email,code,newPassword){
