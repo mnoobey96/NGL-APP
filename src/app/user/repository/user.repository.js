@@ -7,3 +7,7 @@ export async function updateUserByEmail(email,updatedData){
         {returnDocument:"after"} //options
     )
 }
+
+export async function findUserById(id){
+    return User.findOne({_id:id,isDeleted:false})
+}
